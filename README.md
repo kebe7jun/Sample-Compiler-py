@@ -1,7 +1,7 @@
 # Sample Compiler
 
-This is a language compiler write with python in Tkinter.
-It support ugly UI and can compiler Sample Language.
+This is a language compiler write with Tkinter in python.
+It support ugly UI and can compile Sample Language.
 
 ## Install
 ```
