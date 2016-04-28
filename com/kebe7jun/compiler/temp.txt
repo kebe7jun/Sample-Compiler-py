@@ -1,0 +1,9 @@
+program test;
+var a, b, c:integer;
+begin
+
+if a <10 then a+=12;
+if a <> 20 then b = 23.123;
+	
+1.23ndas
+end.
