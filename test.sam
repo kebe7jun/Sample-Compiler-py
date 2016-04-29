@@ -1,18 +1,19 @@
+/**
+
+name: test
+author: KEBE
+time: 2016.4.29
+
+**/
 program test;
 var a, b, c:integer;
 d : char;
 begin
-/*
-author: KEBE
-time: 2016.4.29
-**/
 if a <10 then a+=12;
 if a <> 20 then b = 23.123;
 if c = 1 then /*This is a note*/ d = '123nscdh283/d%&^%&%&12312 \t';
 while(true)
-begin
-d = ' {\//dasd2&#}';	//This is a note.
-end
-	
-end.
+	begin
+		d = '{}{}{}{}@';
+	end.
 //This is a note, 
