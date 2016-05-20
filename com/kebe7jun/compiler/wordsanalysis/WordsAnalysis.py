@@ -96,62 +96,74 @@ class WordsAnalysis:
         self.code = self.delete_note(self.code)
         self.code = self.code.replace('\t', ' ')
         strs = self.code.split('\n')
-        info = ''
         error = ''
         token = []
         line = 1
         for item in strs:
             s = self.add_blank_to_code(item)
             s = s.split(' ')
-            for item in s:
+            i = 0
+            for i in range(len(s)):
+                try:
+                    item = s[i]
+                except Exception as e:
+                    continue
                 item = str(item)
+                e = ''
                 if item == '':
                     continue
                 try:
                     k = self.token_table[item]
-                    info += '{}: ({}, "{}")\n'.format(line, k, item)
-                    token.append((k, item))
                 except KeyError:
                     if item == 'true' or item == 'false':
                         k=38
-                        info += '{}: ({}, "{}")\n'.format(line, k, item)
-                        token.append((k, item))
                     elif item[0] == '_':
                         k=37
-                        info += '{}: ({}, "{}")\n'.format(line, k, self.value[item])
-                        token.append((k, item[1:-1]))
-                    elif item[0] == '\'' and item[-1] == '\'':
-                        k=37
-                        info += '{}: ({}, "{}")\n'.format(line, k, item[1:-1])
-                        token.append((k, item[1:-1]))
-                    elif '.' in item:
-                        try:
-                            float(item)
-                            k=36
-                            info += '{}: ({}, "{}")\n'.format(line, k, item)
-                            token.append((k, item))
-                        except Exception:
-                            error += 'Line {} error: Unexpected word "{}"\n'.format(line, item)
+                        item = self.value[item]
+                    # elif '.' in item:
+                    #     try:
+                    #         float(item)
+                    #         k=36
+                    #     except Exception:
+                    #         e = 'Line {} error: Unexpected word "{}"\n'.format(line, item)
                     elif item[0] in '1234567890-+':
+                        isFloat = True if '.' in item else False
+                        k = 36 if isFloat else 35
+                        # print item
                         try:
-                            int(item)
-                            k=35
-                            info += '{}: ({}, "{}")\n'.format(line, k, item)
-                            token.append((k, item))
+                            p = re.compile('^[0-9]+(\\.[0-9]+)?[eE][0-9]?')
+                            if p.match(item):
+                                try:
+                                    nitem = s[i+1]
+                                    print nitem
+                                    if nitem == '+' or nitem == '-':
+                                        try:
+                                            int(s[i+2])
+                                            item = item + nitem + s[i+2]
+                                            del s[i+1]
+                                            del s[i+1]
+                                        except Exception:
+                                            pass
+                                except Exception:
+                                    pass
+                            else:
+                                float(item)
                         except Exception:
-                            error += 'Line {} error: Unexpected word "{}"\n'.format(line, item)
+                            e = 'Line {} error: Unexpected word "{}"\n'.format(line, item)
                     else:
                         p = re.compile('^[a-zA-Z][a-zA-Z0-9]?')
                         if p.match(item):
                             k=34
-                            info += '{}: ({}, "{}")\n'.format(line, k, item)
-                            token.append((k, item))
                         else:
-                            error += 'Line {} error: Unexpected word "{}"\n'.format(line, item)
+                            e = 'Line {} error: Unexpected word "{}"\n'.format(line, item)
+                if e == '':
+                    token.append({"line":line, "key":k, "value":item})
+                else:
+                    error += e
             line += 1
-        print token
+        # print token
+        # print token
         return {
-            'info':info,
             'error':error,
             'token':token
         }
@@ -162,17 +174,19 @@ class WordsAnalysis:
         s = ''
         for i in range(len(str)):
             try:
-                if str[i] in '()*/,:;':
+                if str[i] in '+-()*/,:;':
                     s += ' {} '.format(str[i])
                 elif str[i] in '<>=':
                         if str[i+1] == '=' or (str[i] == '<' and str[i+1] == '>'):
                             s += ' {}{} '.format(str[i], str[i+1])
                             i += 1
-                elif str[i] in '+-':
-                    if str[i+1] in '0123456789':    #is number
-                        s += ' {}'.format(str[i])
-                    else:
-                        s += ' {} '.format(str[i])
+                        else:
+                            s += ' {} '.format(str[i])
+                # elif str[i] in '+-':
+                #     if str[i+1] in '0123456789':    #is number
+                #         s += ' {}'.format(str[i])
+                #     else:
+                #         s += ' {} '.format(str[i])
                 else:
                     s += str[i]
             except Exception:
@@ -208,15 +222,6 @@ class WordsAnalysis:
         return code
 
     def delete_note(self, code):
-        # r = re.compile('/\\*[\\d\\D]*\\*/')
-        # p = r.findall(code)
-        # print p
-        # for item in p:
-        #     t = len(item.split('\n'))
-        #     ns = ''
-        #     for i in range(t):
-        #         ns += '\n'
-        #     code = code.replace(item, ns)
         code = self.delete_note_lines(code)
         strs = code.split('\n')
         code = ''
@@ -232,7 +237,7 @@ class WordsAnalysis:
             if is_pass_one:
                 is_pass_one = False
                 continue
-            print code[i:i+2]
+            # print code[i:i+2]
             if code[i:i+2] == '/*' and not is_in_note:
                 is_pass_one = True
                 is_in_note = True

@@ -26,10 +26,13 @@ class Cmd:
     def analysis_words(self, e = None):
         wa = WordsAnalysis(self.get_content())
         res = wa.start_analysis()
+        info = ''
+        for item in res['token']:
+            info += '{}:\t{}\t\t{}\n'.format(item['line'], item['key'], item['value'])
         self.frame.edit_text_msg.delete(0.0, END)
         self.frame.edit_text_msg.insert(1.0, res['error'])
         self.frame.edit_text_show.delete(0.0, END)
-        self.frame.edit_text_show.insert(1.0, res['info'])
+        self.frame.edit_text_show.insert(1.0, info)
 
     def save_to_file(self, e = None):
         if(self.filename != ''):
