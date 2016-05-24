@@ -16,7 +16,7 @@ $ python main.py
 ```
 
 ### Features
--[x] Words Analysis
--[ ] Grammar Analysis
--[ ] LL(1) Algorithm
--[ ] DNA NFA
+- [x] Words Analysis
+- [ ] Grammar Analysis
+- [ ] LL(1) Algorithm
+- [ ] DNA NFA
