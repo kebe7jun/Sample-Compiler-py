@@ -131,11 +131,11 @@ class WordsAnalysis:
                         k = 36 if isFloat else 35
                         # print item
                         try:
-                            p = re.compile('^[0-9]+(\\.[0-9]+)?[eE][0-9]?')
+                            p = re.compile('^[0-9]+(\\.[0-9]+)?[eE][0-9]?$')
                             if p.match(item):
                                 try:
                                     nitem = s[i+1]
-                                    print nitem
+                                    # print nitem
                                     if nitem == '+' or nitem == '-':
                                         try:
                                             int(s[i+2])
@@ -175,7 +175,7 @@ class WordsAnalysis:
                     "value":x['value'],
                     "type":x['key']
                 } for x in token  if 34 <= x['key'] <= 38]
-        print c
+        # print c
         return c
 
     def add_blank_to_code(self, str):
