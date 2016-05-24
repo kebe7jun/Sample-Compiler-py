@@ -50,7 +50,7 @@ class WordsAnalysis:
         "(":46,
         ")":47,
         ".":48,
-        "end.":0,
+        # "end.":0,
     }
 
     def __init__(self, code):
@@ -165,8 +165,18 @@ class WordsAnalysis:
         # print token
         return {
             'error':error,
-            'token':token
+            'token':token,
+            'char':self.get_char_list(token)
         }
+
+    def get_char_list(self, token):
+        c = [
+                {
+                    "value":x['value'],
+                    "type":x['key']
+                } for x in token  if 34 <= x['key'] <= 38]
+        print c
+        return c
 
     def add_blank_to_code(self, str):
         #Add blank to the source code

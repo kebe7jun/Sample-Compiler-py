@@ -30,6 +30,7 @@ class MainFrame(Frame):
         self.edit_text.bind('<Control-Key-a>', self.select_text)
         self.edit_text.bind('<Control-Key-o>', self.cmd.open_file)
         self.edit_text.bind('<F5>', self.cmd.analysis_words)
+        self.edit_text.bind('<F6>', self.cmd.analysis_grammar)
         # self.edit_text_show.bind('<Button-1>', self.select_texttext)
         self.edit_text_show.bind('<Button-1>', self.cmd.on_text_show_line_select)
         self.edit_text_msg.bind('<Button-1>', self.cmd.on_text_msg_line_select)

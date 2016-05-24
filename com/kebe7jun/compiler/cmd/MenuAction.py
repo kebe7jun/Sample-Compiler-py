@@ -4,6 +4,7 @@ from Tkinter import *
 
 import tkFileDialog
 from com.kebe7jun.compiler.wordsanalysis.WordsAnalysis import *
+from com.kebe7jun.compiler.grammaranalysis.GrammarAnalysis import *
 import time
 
 
@@ -21,6 +22,10 @@ class Cmd:
             self.frame.edit_text.delete(0.0, END)
             self.frame.edit_text.insert(1.0, open(self.filename).read())
             pass
+
+    def analysis_grammar(self, e = None):
+        ga = GrammarAnalysis(code = self.get_content())
+        res = ga.start_analysis()
 
     #words analysis
     def analysis_words(self, e = None):

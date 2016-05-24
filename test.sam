@@ -17,5 +17,6 @@ if c = 1 then /*This is a note*/ d = '123nscdh283/d%&^%&%&12312 \t';
 while(true)
 	begin
 		d = '{}{}{}{}@';
-	end.
+	end
+end.
 //This is a note, 

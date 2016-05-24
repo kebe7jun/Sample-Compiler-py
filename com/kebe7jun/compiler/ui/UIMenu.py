@@ -19,3 +19,4 @@ class UIMenu():
         self.menu.add_cascade(label = 'File', menu = self.file_menu)
 
         self.menu.add_command(label = 'Words Analysis(F5)', command=self.cmd.analysis_words)
+        self.menu.add_command(label = 'Grammar Analysis(F6)', command=self.cmd.analysis_grammar)
