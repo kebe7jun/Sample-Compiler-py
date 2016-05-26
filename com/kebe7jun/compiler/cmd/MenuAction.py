@@ -24,8 +24,20 @@ class Cmd:
             pass
 
     def analysis_grammar(self, e = None):
-        ga = GrammarAnalysis(code = self.get_content())
-        res = ga.start_analysis()
+        wa = WordsAnalysis(self.get_content())
+        res = wa.start_analysis()
+        if res['error'] != '':
+            info = ''
+            for item in res['token']:
+                info += '{}:\t{}\t\t{}\n'.format(item['line'], item['key'], item['value'])
+            self.set_edit_text_msg_content(res['error'])
+            self.set_edit_text_show_content(info)
+            return
+        else:
+            ga = GrammarAnalysis(code = self.get_content())
+            res = ga.start_analysis()
+            self.set_edit_text_msg_content(res['error'])
+            self.set_edit_text_show_content(res['result'])
 
     #words analysis
     def analysis_words(self, e = None):
@@ -34,10 +46,16 @@ class Cmd:
         info = ''
         for item in res['token']:
             info += '{}:\t{}\t\t{}\n'.format(item['line'], item['key'], item['value'])
-        self.frame.edit_text_msg.delete(0.0, END)
-        self.frame.edit_text_msg.insert(1.0, res['error'])
+            self.set_edit_text_msg_content(res['error'])
+            self.set_edit_text_show_content(info)
+
+    def set_edit_text_show_content(self, content):
         self.frame.edit_text_show.delete(0.0, END)
-        self.frame.edit_text_show.insert(1.0, info)
+        self.frame.edit_text_show.insert(1.0, content)
+
+    def set_edit_text_msg_content(self, content):
+        self.frame.edit_text_msg.delete(0.0, END)
+        self.frame.edit_text_msg.insert(1.0, content)
 
     def save_to_file(self, e = None):
         if(self.filename != ''):

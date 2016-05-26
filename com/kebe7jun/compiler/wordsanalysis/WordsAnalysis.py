@@ -182,14 +182,19 @@ class WordsAnalysis:
         #Add blank to the source code
 
         s = ''
+        skip = False
         for i in range(len(str)):
+            if skip:
+                skip = False
+                continue
             try:
                 if str[i] in '+-()*/,:;':
                     s += ' {} '.format(str[i])
                 elif str[i] in '<>=':
-                        if str[i+1] == '=' or (str[i] == '<' and str[i+1] == '>'):
-                            s += ' {}{} '.format(str[i], str[i+1])
+                        if str[i+1] == '=' or str[i:i+2] == '<>':
+                            s += ' {} '.format(str[i:i+2])
                             i += 1
+                            skip = True
                         else:
                             s += ' {} '.format(str[i])
                 # elif str[i] in '+-':
