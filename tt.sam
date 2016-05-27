@@ -1,8 +1,8 @@
 program test;
 const 
-a = 1;b = 2;
+ a = 1;b = 2;
 var
 c, d, e:integer;
 begin
-x = 1;
+if a + 3 <= 10 then a:=2;
 end.
