@@ -11,7 +11,7 @@ program test;
 var a, b, c:integer;
 d : char;
 begin
-if a <10 then a+=12e-1;
+if a <10 then xxx := 123;
 if a <> 20 then b = -23.123e+134;
 if c = 1 then /*This is a note*/ d = '123nscdh283/d%&^%&%&12312 \t';
 while(true)
