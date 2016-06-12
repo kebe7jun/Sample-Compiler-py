@@ -5,6 +5,7 @@ from Tkinter import *
 import tkFileDialog
 from com.kebe7jun.compiler.wordsanalysis.WordsAnalysis import *
 from com.kebe7jun.compiler.grammaranalysis.GrammarAnalysis import *
+from com.kebe7jun.compiler.middlecode.GeneMiddleCode import *
 import time
 
 
@@ -35,6 +36,22 @@ class Cmd:
             return
         else:
             ga = GrammarAnalysis(code = self.get_content())
+            res = ga.start_analysis()
+            self.set_edit_text_msg_content(res['error'])
+            self.set_edit_text_show_content(res['result'])
+
+    def generate_middle_code(self, e = None):
+        wa = WordsAnalysis(self.get_content())
+        res = wa.start_analysis()
+        if res['error'] != '':
+            info = ''
+            for item in res['token']:
+                info += '{}:\t{}\t\t{}\n'.format(item['line'], item['key'], item['value'])
+            self.set_edit_text_msg_content(res['error'])
+            self.set_edit_text_show_content(info)
+            return
+        else:
+            ga = GenerateMiddleCode(code = self.get_content())
             res = ga.start_analysis()
             self.set_edit_text_msg_content(res['error'])
             self.set_edit_text_show_content(res['result'])

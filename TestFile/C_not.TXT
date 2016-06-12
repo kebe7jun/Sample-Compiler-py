@@ -1,0 +1,8 @@
+program example;
+var
+     a,b,c:integer;
+x:char;
+begin
+if not (b>3) then c:=3;
+
+end.

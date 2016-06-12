@@ -1,0 +1,12 @@
+program example;
+var
+     a,b,c:integer;
+x:char;
+begin
+
+for i := b*2 to 100 do
+   begin
+	x:= (a+b)*(c+d)-(a+b+c);
+        T:=T+8;
+   end
+end.

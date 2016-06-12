@@ -1,0 +1,8 @@
+program example;
+var
+     a,b,c:integer;
+x:char;
+begin
+	for x:=1+2 to 3 do
+	a:=b;
+end.

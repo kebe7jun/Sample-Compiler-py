@@ -1,0 +1,10 @@
+/*fasfasdfasdfasdfasd*/
+program example1;
+const
+    a:=1;b:=3;c:='fasdf';
+var 
+    a,b,c:integer;
+    x:char;
+begin
+    for x:=1+2 to 3 do b:=100;
+end.  

@@ -1,8 +1,10 @@
 #!/bin/env python
 #coding=utf-8
-from com.kebe7jun.compiler.wordsanalysis.WordsAnalysis import *
 
-class GrammarAnalysis():
+from com.kebe7jun.compiler.wordsanalysis.WordsAnalysis import *
+from ReversePolishNotation import *
+
+class GenerateMiddleCode:
 	"""
 		To analysis the grammar of sample language.
 	"""
@@ -189,6 +191,7 @@ class GrammarAnalysis():
 		self.print_info('Var area analysis done.')
 
 	def deal_express(self, is_in_b = False):
+		start_index = self.now_token_index
  		t = self.get_next_token()
 		dealed_list = []
 		self.print_info('Analysing express...')
@@ -244,6 +247,10 @@ class GrammarAnalysis():
 
 		print dealed_list
 		self.print_info('Express analysis done.')
+		a = self.token[start_index:self.now_token_index]
+		r = ReversePolishNotation(a)
+		r.getPlishNotation()
+		return self.token[start_index:self.now_token_index]
 
 	def deal_bracket(self):
 		t = self.get_next_token()

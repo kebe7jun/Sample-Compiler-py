@@ -1,0 +1,8 @@
+program example;
+const k=2,l=3;
+var
+     a,b,c:integer;
+x:char;
+begin
+if(a+c*3>b) and (b>3) then c:=3;
+end.

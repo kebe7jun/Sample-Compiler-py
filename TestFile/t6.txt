@@ -1,0 +1,7 @@
+program example;
+var
+     a,b,c:integer;
+x:char;
+begin
+	repeat a:=10; until a>b;
+end.

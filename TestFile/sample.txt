@@ -1,0 +1,15 @@
+/*fasfasdfasdfasdfasd*/
+program example1;
+var 
+    a,b,c:integer;
+    x:char;
+begin
+    while a>b do c:=5;
+    x:='c';
+    a:=52;
+    if (a+c*3>b) and (b>3) then c:=3;
+    x:=2+(3*a)-b*c+8;
+    for x:=1+2 to 3 do b:=100;
+    while a>b do c:=5;
+    repeat a:=10 until a>b;
+end.  

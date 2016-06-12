@@ -12,7 +12,7 @@ class MainFrame(Frame):
         self.config(width = 800, height = 500)
         self.pack()
         self.edit_text = NumberText.NumberText(self, height=1000)
-        self.edit_text.grid(row = 0, column = 0)
+        self.edit_text.grid(row = 0, column = 0, rowspan = 2)
         self.edit_text = self.edit_text.text
         self.right_frame = Frame(self)
         self.right_frame.grid(row = 0, column = 1)

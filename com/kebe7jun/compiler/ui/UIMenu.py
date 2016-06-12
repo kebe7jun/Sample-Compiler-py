@@ -20,3 +20,4 @@ class UIMenu():
 
         self.menu.add_command(label = 'Words Analysis(F5)', command=self.cmd.analysis_words)
         self.menu.add_command(label = 'Grammar Analysis(F6)', command=self.cmd.analysis_grammar)
+        self.menu.add_command(label = 'Generate Middle Code(F7)', command=self.cmd.generate_middle_code)

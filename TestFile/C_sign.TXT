@@ -1,0 +1,7 @@
+program example;
+var
+     a,b,c:integer;
+x:char;
+begin
+x:=b*c*8.5e-4 - x2;
+end.

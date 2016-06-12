@@ -1,0 +1,7 @@
+B->BoT| T
+T->TaF|F
+F->nF|(B)|t|f
+S->#B#
+
+
+

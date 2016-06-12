@@ -1,0 +1,8 @@
+program example;
+var
+     a,b,c:integer;
+x:char;
+begin
+x:=3+8*c+(5-a);
+repeat a:=10; until a>b;
+end.
