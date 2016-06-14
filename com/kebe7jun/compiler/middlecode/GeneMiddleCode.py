@@ -21,6 +21,7 @@ class GenerateMiddleCode:
 			"var":self.deal_var,
 			"begin":self.deal_begin
 		}
+		self.t_index = 1
 		#Check wether to run word analysis
 		if token is None:
 			if code is None:
@@ -38,6 +39,7 @@ class GenerateMiddleCode:
 		self.result = {
 			"result":"",
 			"error":"",
+			"mid":[],
 			"const_table":self.const_table,
 			"var_table":self.var_table
 		}
@@ -55,7 +57,28 @@ class GenerateMiddleCode:
 				except Exception:
 					if self.is_symbol(t):
 						self.deal_instruct()
+		self.print_middle_code('', '', '', '')
+		# self.do_last_work()
 		return self.result
+
+	def do_last_work(self):
+		mid = self.result['mid']
+		j = 0
+		for i in range(len(mid)):
+			i = i-j
+			if mid[i][0] in ('<', '>', '<=', '>=', '==', '<>'):
+				j += 1
+				mid[i + 1][0] = 'j' + mid[i][0]
+				mid[i + 1][1] = mid[i][1]
+				mid[i + 1][2] = mid[i][2]
+				del mid[i]
+				for item in mid:
+					try:
+						a = int(item[3])
+						if a > i:
+							item[3] = str(a-1)
+					except Exception:
+						pass
 
 	def print_info(self, w):
 		for i in range(self.out_index):
@@ -190,6 +213,23 @@ class GenerateMiddleCode:
 		self.out_index -= 4
 		self.print_info('Var area analysis done.')
 
+	def gene_middle_code(self, expr):
+		s = 0
+		e = []
+		c = []
+		for i in range(len(expr)):
+			if expr[i]['value'] in ('not', 'and', 'or'):
+				r = ReversePolishNotation(expr[s:i])
+				e.append(expr[s:i])
+				s = i+1
+				c.append(expr[i])
+		e.append(expr[s:len(expr)])
+		for i in range(len(e)):
+			r = ReversePolishNotation(e[i])
+			e[i] = r.getPlishNotation()
+		c.reverse()
+		return {'e':e, 'c':c}
+
 	def deal_express(self, is_in_b = False):
 		start_index = self.now_token_index
  		t = self.get_next_token()
@@ -248,9 +288,8 @@ class GenerateMiddleCode:
 		print dealed_list
 		self.print_info('Express analysis done.')
 		a = self.token[start_index:self.now_token_index]
-		r = ReversePolishNotation(a)
-		r.getPlishNotation()
-		return self.token[start_index:self.now_token_index]
+		return self.gene_middle_code(a)
+		# return self.token[start_index:self.now_token_index]
 
 	def deal_bracket(self):
 		t = self.get_next_token()
@@ -263,20 +302,55 @@ class GenerateMiddleCode:
 			t = self.get_next_token()
 		pass
 
-	def deal_if(self): 
-		'''
-			Here set the priority that
-			( + - * / ) > (and or not) > (> < >= <= <>)
-		'''
+	def deal_math_expr(self, expr):
+		s = []
+		for e in expr:
+			if e['value'] in ('+', '-', '*', '/', '<=', '>=', '==', '<>', '<', '>'):
+				e2 = s.pop()
+				e1 = s.pop()
+				self.print_middle_code(e['value'], e1['value'], e2['value'], 't{}'.format(self.t_index))
+				s.append({'value':'t{}'.format(self.t_index)})
+				self.t_index += 1
+			else:
+				s.append(e)
+		return s.pop()['value']
+
+	def deal_if(self):
 		if self.is_end():
 			return
-		self.print_info('Analysing IF setence...')
+		self.print_info('Analysing IF sentence...')
 		self.out_index += 4
-		self.deal_express()
+		expr = self.deal_express()
+		to_fill_else_index = []
+		to_fill_then_index = []
+		for ie in expr['e']:
+			e = self.deal_math_expr(ie)
+			if len(expr['c']) == 0:
+				# if a then...
+				self.print_middle_code('jnz', e, '_', '')
+				to_fill_then_index.append(self.get_mid_length()-1)
+				self.print_middle_code('j', '_', '_', '')
+				to_fill_else_index.append(self.get_mid_length()-1)
+			else:
+				# There are rops
+				r = expr['c'].pop()
+				if r['value'] == 'or':
+					self.print_middle_code('jnz', e, '_', '')
+					to_fill_then_index.append(self.get_mid_length()-1)
+					self.print_middle_code('j', '_', '_', self.get_mid_length() + 2)
+				elif r['value'] == 'and':
+					self.print_middle_code('jnz', e, '_', self.get_mid_length() + 3)
+					self.print_middle_code('j', '_', '_', '')
+					to_fill_else_index.append(self.get_mid_length()-1)
 		t = self.get_next_token()
 		if t['value'] == 'then':
+			for item in to_fill_then_index:
+				self.result['mid'][item][3] = self.get_mid_length() + 1
 			self.deal_instruct()
 			t = self.get_next_token()
+			t = self.get_next_token()
+			for item in to_fill_else_index:
+				self.result['mid'][item][3] = self.get_mid_length() + 1
 			if t is not None and t['value'] == 'else':
 				self.deal_instruct()
 			else:
@@ -288,7 +362,32 @@ class GenerateMiddleCode:
 		# self.return_before_token()
 
 	def deal_for(self):
-		pass
+		self.print_info('Analysing FOR sentence...')
+		self.out_index += 4
+		v = self.deal_instruct(True)
+		t = self.get_next_token()
+		to_fill_end = 0
+		if t['value'] != 'to':
+			self.print_info('Missing \'to\' in for sentence.')
+		else:
+			e = self.deal_math_expr(self.deal_express()['e'][0])
+			self.print_middle_code('j>', v, e, '')
+			to_fill_end = self.get_mid_length() - 1
+			# self.print_middle_code('j', '_', '_', '')
+			t = self.get_next_token()
+			if t['value'] != 'do':
+				self.print_info('Missing \'do\' in for sentence.')
+			else:
+				t = self.get_next_token()
+				if t['value'] == 'begin':
+					self.deal_begin()
+				else:
+					self.return_before_token()
+					self.deal_instruct()
+		self.print_middle_code('j', '_', '_', to_fill_end + 1)
+		self.result['mid'][to_fill_end][3] = self.get_mid_length() + 1
+		self.out_index -= 4
+		self.print_info('For setence analysis done.')
 
 	def deal_while(self):
 		self.print_info('Analysing WHILE setence...')
@@ -321,18 +420,25 @@ class GenerateMiddleCode:
 		self.out_index -= 4
 		self.print_info('Repeat setence analysis done.')
 
-	def deal_instruct(self):
+	def deal_instruct(self, is_need_end = False):
 		if self.is_end():
 			return
+		t = self.get_next_token()
+		try:
+			self.module_func[t['value']]()
+			self.return_before_token()
+			return
+		except Exception:
+			pass
 		self.print_info('Analysing instruct...')
 		self.out_index += 4
-		t = self.get_next_token()
 		if not self.is_var(t):
 			self.write_error(t['line'], 'Invalid instruct start with \'{}\''.format(t['value']))
 			#self.read_to_instruct_end()
 			return
 		if self.is_valid_var(t['value']) and self.is_valid_const(t['value']):
 			self.write_error(t['line'], 'Undefined var \'{}\''.format(t['value']))
+		v = t
 		t = self.get_next_token()
 		if t['value'] == ':':
 			t = self.get_next_token()
@@ -348,18 +454,24 @@ class GenerateMiddleCode:
 					self.write_error(t['line'], '\'{}\' is not a const.'.format(t['value']))
 					#self.read_to_instruct_end()
 					return
+				self.print_middle_code('=', t['value'], '_', v['value'])
 		elif t['value'] == '=':
 			# such as a = 1+23/23;
-			self.deal_express()
+			expr = self.deal_express()
+			e = ''
+			for ie in expr['e']:
+				e = self.deal_math_expr(ie)
 			t = self.get_next_token()
 			if t['value'] != ';':
-				self.write_error(t['line'], 'Unexcept end of instruct at \'{}\''.format(t['value']))
-				self.return_before_token()
+				t = self.return_before_token()
+				if not is_need_end:
+					self.write_error(t['line'], 'Unexcept end of instruct at \'{}\''.format(t['value']))
+					self.return_before_token()
+			self.print_middle_code('=', e, '_', v['value'])
 
 		self.out_index -= 4
 		self.print_info('Instruct setence analysis done.')
-
-
+		return v['value']
 
 	def read_to_instruct_end(self):
 		t = self.get_next_token()
@@ -427,3 +539,9 @@ class GenerateMiddleCode:
 
 	def is_middle_symbol(self, t):
 		return 22<=t['key'] <=33
+
+	def print_middle_code(self, j, v1, v2, t):
+		self.result['mid'].append([j, v1, v2, t])
+
+	def get_mid_length(self):
+		return len(self.result['mid'])

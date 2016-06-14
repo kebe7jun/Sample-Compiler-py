@@ -41,20 +41,21 @@ class Cmd:
             self.set_edit_text_show_content(res['result'])
 
     def generate_middle_code(self, e = None):
-        wa = WordsAnalysis(self.get_content())
-        res = wa.start_analysis()
+        ga = GrammarAnalysis(code = self.get_content())
+        res = ga.start_analysis()
         if res['error'] != '':
-            info = ''
-            for item in res['token']:
-                info += '{}:\t{}\t\t{}\n'.format(item['line'], item['key'], item['value'])
             self.set_edit_text_msg_content(res['error'])
-            self.set_edit_text_show_content(info)
+            self.set_edit_text_show_content(res['result'])
             return
         else:
             ga = GenerateMiddleCode(code = self.get_content())
             res = ga.start_analysis()
+            mid = res['mid']
+            r = ''
+            for i in range(len(mid)):
+                r += '%3d: (%-4s %-5s %-5s %-5s)\n' % (i + 1, mid[i][0], mid[i][1], mid[i][2], mid[i][3])
             self.set_edit_text_msg_content(res['error'])
-            self.set_edit_text_show_content(res['result'])
+            self.set_edit_text_show_content(r)
 
     #words analysis
     def analysis_words(self, e = None):

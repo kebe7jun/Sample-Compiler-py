@@ -12,6 +12,8 @@ class ReversePolishNotation:
             '>=':1,
             '==':1,
             '<>':1,
+            '<':1,
+            '>':1,
             '+':2,
             '-':2,
             '*':3,
@@ -32,7 +34,7 @@ class ReversePolishNotation:
                 while s1[-1]['value'] != '(':
                     s2.append(s1.pop())
                 s1.pop()
-            elif x['value'] in ('+', '-', '*', '/', '>=', '<=', '==', '<>', 'or', 'and', 'not'):
+            elif x['value'] in ('+', '-', '*', '/', '<', '>', '>=', '<=', '==', '<>', 'or', 'and', 'not'):
                 if s1[-1]['value'] == '(':
                     s1.append(x)
                 elif self.pro[x['value']] > self.pro[s1[-1]['value']]:

@@ -1,22 +1,8 @@
-
-/**
-
-name: test
-author: KEBE
-time: 2016.4.29
-
-**/
 program test;
 
-var a, b, c:integer;
-d : char;
+var a,b,c,d,e,f,g,h,i,p:bool;
 begin
-if a <10 then xxx := 123;
-if a <> 20 then b = -23.123e+134;
-if c = 1 then /*This is a note*/ d = '123nscdh283/d%&^%&%&12312 \t';
-while(true)
-	begin
-		d = '{}{}{}{}@';
-	end
+for i = a + b * 2 to c + d + 10 do 
+if h > g then p = p + 1;
+if a < 1 or false then a:=2;
 end.
-//This is a note, 

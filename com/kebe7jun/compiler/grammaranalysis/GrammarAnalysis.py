@@ -281,7 +281,26 @@ class GrammarAnalysis():
 		# self.return_before_token()
 
 	def deal_for(self):
-		pass
+		self.print_info('Analysing FOR sentence...')
+		self.out_index += 4
+		self.deal_instruct(True)
+		t = self.get_next_token()
+		if t['value'] != 'to':
+			self.print_info('Missing \'to\' in for sentence.')
+		else:
+			self.deal_express()
+			t = self.get_next_token()
+			if t['value'] != 'do':
+				self.print_info('Missing \'do\' in for sentence.')
+			else:
+				t = self.get_next_token()
+				if t['value'] == 'begin':
+					self.deal_begin()
+				else:
+					self.return_before_token()
+					self.deal_instruct()
+		self.out_index -= 4
+		self.print_info('For setence analysis done.')
 
 	def deal_while(self):
 		self.print_info('Analysing WHILE setence...')
@@ -314,12 +333,18 @@ class GrammarAnalysis():
 		self.out_index -= 4
 		self.print_info('Repeat setence analysis done.')
 
-	def deal_instruct(self):
+	def deal_instruct(self, is_need_end = False):
 		if self.is_end():
 			return
+		t = self.get_next_token()
+		try:
+			self.module_func[t['value']]()
+			self.return_before_token()
+			return
+		except Exception:
+			pass
 		self.print_info('Analysing instruct...')
 		self.out_index += 4
-		t = self.get_next_token()
 		if not self.is_var(t):
 			self.write_error(t['line'], 'Invalid instruct start with \'{}\''.format(t['value']))
 			#self.read_to_instruct_end()
@@ -345,7 +370,7 @@ class GrammarAnalysis():
 			# such as a = 1+23/23;
 			self.deal_express()
 			t = self.get_next_token()
-			if t['value'] != ';':
+			if t['value'] != ';' and not is_need_end:
 				self.write_error(t['line'], 'Unexcept end of instruct at \'{}\''.format(t['value']))
 				self.return_before_token()
 
