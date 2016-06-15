@@ -18,6 +18,11 @@ class UIMenu():
         self.file_menu.add_command(label = 'Exit', command=self.cmd.exit)
         self.menu.add_cascade(label = 'File', menu = self.file_menu)
 
+        self.grammar_menu = Menu(self.menu)
+        self.grammar_menu.add_command(label = 'Grammar Analysis(F6)', command = self.cmd.open_file)
+        self.grammar_menu.add_command(label = 'LL(1)', command = self.cmd.save_to_file)
+        self.grammar_menu.add_command(label = 'Operator First', command = self.cmd.open_of)
+
         self.menu.add_command(label = 'Words Analysis(F5)', command=self.cmd.analysis_words)
-        self.menu.add_command(label = 'Grammar Analysis(F6)', command=self.cmd.analysis_grammar)
+        self.menu.add_cascade(label = 'Grammar Analysis', menu = self.grammar_menu)
         self.menu.add_command(label = 'Generate Middle Code(F7)', command=self.cmd.generate_middle_code)

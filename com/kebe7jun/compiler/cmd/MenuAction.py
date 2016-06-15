@@ -6,6 +6,8 @@ import tkFileDialog
 from com.kebe7jun.compiler.wordsanalysis.WordsAnalysis import *
 from com.kebe7jun.compiler.grammaranalysis.GrammarAnalysis import *
 from com.kebe7jun.compiler.middlecode.GeneMiddleCode import *
+from com.kebe7jun.compiler.ui.OperatorFirstFrame import *
+from com.kebe7jun.compiler.ui.MainFrame import *
 import time
 
 
@@ -86,6 +88,11 @@ class Cmd:
             f = open(fn, 'w')
             f.write(self.get_content())
             self.filename = fn
+
+    def open_of(self, e = None):
+        root = Tk()
+        OperatorFirstFrame(root)
+        root.mainloop()
 
     def get_content(self):
         return self.frame.edit_text.get(0.0, END)[0:-1]
